@@ -37,8 +37,10 @@ namespace RingoMediaTask.Services
                     {
                         var dbContext = scope.ServiceProvider.GetRequiredService<AdminDbContext>();
                         var emailNotificationService = scope.ServiceProvider.GetRequiredService<IEmailNotification>();
-                        var emailsToSent = dbContext.Reminders.Where(x => (x.IsProcessing == 1) && (x.ReminderDateTime <= DateTime.Now.AddMinutes(-5))).ToList();
-                        foreach (var email in emailsToSent)
+                        //var reminders = dbContext.Reminders.Where(x => x.IsProcessing == 1).ToList();
+                        var now = DateTime.Now;
+                        var reminderLesssTime = dbContext.Reminders.Where(x => x.IsProcessing == 1 &&(x.ReminderDateTime <= now.AddMinutes(5))).ToList();
+                        foreach (var email in reminderLesssTime)
                         {
                             var response = emailNotificationService.SendEmailAsync(email).Result;
                             _logger.LogInformation($"Reminder status:{response.StatusCode}");

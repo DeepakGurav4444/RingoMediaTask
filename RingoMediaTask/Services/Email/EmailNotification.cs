@@ -48,7 +48,7 @@ namespace RingoMediaTask.Services.Email
                     <li>Agenda: Discuss project progress</li>
                 </ul>
                 <p>Please be punctual and prepared for the meeting.</p>
-                <p>Best regards,<br>Your Organization</p>
+                <p>Best regards,<br>RingoMedia</p>
             </body>
             </html>";
 
