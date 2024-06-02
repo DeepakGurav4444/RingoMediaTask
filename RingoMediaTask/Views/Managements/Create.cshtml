@@ -1,0 +1,62 @@
+﻿@using RingoMediaTask.Models.Entities
+@model ManagementDTO
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create Management</h1>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row">
+                <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="management.Name" class="control-label"></label>
+                        <input asp-for="management.Name" class="form-control" />
+                        <span asp-validation-for="management.Name" class="text-danger"></span>
+            </div>
+            </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="management.Logo" class="control-label"></label>
+                        <input asp-for="management.Logo" name="Logo" class="form-control-file" type="file" onchange="previewImage(event)" />
+                        <img id="logoPreview" src="#" alt="Selected Logo" style="display: none; max-width: 100px; max-height: 100px;" />
+                        <span asp-validation-for="management.Logo" class="text-danger"></span>
+                    </div>
+            </div>
+                </div>
+                    <div class="row">
+                        <div class="col-md-6">
+            <div class="form-group">
+                        <label asp-for="management.Department" class="control-label"></label>
+                @* <select asp-for="DepartmentId" class ="form-control" asp-items="ViewBag.DepartmentId"></select> *@
+                        <select asp-for="management.DepartmentId" class="form-control" id="departmentDropdown">
+                            @foreach (var department in Model.Departments)
+                            {
+                                    var base64Str = ImageHelper.ConvertByteArrayToBase64(department.Logo);
+                                    var mimeType = ImageHelper.GetMimeTypeFromImageByteArray(department.Logo);
+                                <option value="@department.IdDepartment">
+                                    @department.Name
+                                </option>
+                            }
+                        </select>
+            </div>
+            </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

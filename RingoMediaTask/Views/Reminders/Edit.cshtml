@@ -1,0 +1,58 @@
+﻿@model RingoMediaTask.Models.Entities.Reminder
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Reminder</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="IdReminder" />
+            <div class="row">
+                <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="ReminderFor" class="control-label"></label>
+                <input asp-for="ReminderFor" class="form-control" />
+                <span asp-validation-for="ReminderFor" class="text-danger"></span>
+            </div>
+            </div>
+            <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="EmailForReminder" class="control-label"></label>
+                <input asp-for="EmailForReminder" class="form-control" />
+                <span asp-validation-for="EmailForReminder" class="text-danger"></span>
+            </div>
+            </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+            <div class="form-group">
+                <label asp-for="ReminderDateTime" class="control-label"></label>
+                <input asp-for="ReminderDateTime" class="form-control" />
+                <span asp-validation-for="ReminderDateTime" class="text-danger"></span>
+            </div>
+            </div>
+            </div>
+            <div class="row">
+            <div class="col-md-6">
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+            </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

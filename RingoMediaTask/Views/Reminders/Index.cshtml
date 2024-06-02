@@ -1,0 +1,92 @@
+﻿@model IEnumerable<RingoMediaTask.Models.Entities.Reminder>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Reminders List</h1>
+<div>
+    <a asp-action="Create">Create New</a>
+    <button id="refresh-btn" class="btn btn-primary">Refresh</button>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Date and Time
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReminderFor)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EmailForReminder)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReminderDateTime)
+            </td>
+            <td class="status-text">
+                @(item.IsProcessing ==1?"Processing":@item.IsProcessing==2?"Completed":"Stopped")
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.IdReminder">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.IdReminder">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.IdReminder">Delete</a> |
+                <a href="#" class="stop-reprocess-btn" data-id="@item.IdReminder">@((item.IsProcessing == 1) ? "Stop Processing" :(item.IsProcessing == 0)? "Send Notification":"Resend Notification")</a>
+             </td>
+        </tr>
+}
+    </tbody>
+</table>
+@section Scripts {
+    @{<script type="text/javascript">
+        $(document).ready(function () {
+            $('.stop-reprocess-btn').click(function (e) {
+                console.log("Function Called");
+                e.preventDefault();
+
+                var button = $(this);
+                var reminderId = button.data('id');
+
+                $.ajax({
+                    url: '@Url.Action("StopOrReprocess")/' + reminderId,
+                    type: 'PUT',
+                    success: function (response) {
+                        if (response.success) {
+                            var newStatusText = response.newStatus === 1 ? 'Processing' : response.newStatus === 2 ? 'Completed' : 'Stopped';
+                            var newButtonText = response.newStatus === 1 ? 'Stop Processing' : response.newStatus === 0 ? 'Send Notification': 'Resend Notification';
+
+                            button.closest('tr').find('.status-text').text(newStatusText);
+                            button.text(newButtonText);
+                        } else {
+                            alert('Error processing request.');
+                        }
+                    },
+                    error: function () {
+                        alert('Error processing request.');
+                    }
+                });
+            });
+
+            $('#refresh-btn').click(function () {
+                location.reload();
+            });
+        });
+    </script>}
+}

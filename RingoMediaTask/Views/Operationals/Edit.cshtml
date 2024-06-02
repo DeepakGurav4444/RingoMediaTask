@@ -1,0 +1,157 @@
+﻿@model OperationalDTO
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit Operational</h1>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="operational.IdOperational" />
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="operational.Name" class="control-label"></label>
+                        <input asp-for="operational.Name" class="form-control" />
+                        <span asp-validation-for="operational.Name" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        @{
+                            var base64Str = ImageHelper.ConvertByteArrayToBase64(Model.operational.Logo);
+                            var mimeType = ImageHelper.GetMimeTypeFromImageByteArray(Model.operational.Logo);
+                        }
+                        <label asp-for="operational.Logo" class="control-label"></label>
+                        <input type="hidden" id="base64Image" value="data:@mimeType;base64,@base64Str" />
+                        <input asp-for="operational.Logo" name="Logo" class="form-control-file" type="file" onchange="previewImage(event)" />
+                        <img id="logoPreview" src="#" alt="Selected Logo" style="display: none; max-width: 100px; max-height: 100px;" />
+                        <span asp-validation-for="operational.Logo" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="operational.Department" class="control-label"></label>
+                        <select asp-for="operational.DepartmentId" class="form-control" id="departmentDropdown">
+                            @foreach (var department in Model.Departments)
+                            {
+                                <option value="@department.IdDepartment">
+                                    @department.Name
+                                </option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="operational.Management" class="control-label"></label>
+                        <select asp-for="operational.ManagementId" class="form-control" id="managementDropdown">
+                            @foreach (var management in Model.Managements.Where(x => x.IdManagement == Model.operational.ManagementId).ToList())
+                            {
+                                @* var selected = management.IdManagement == Model.operational.ManagementId ? "selected" : ""; *@
+                                <option value="@management.IdManagement">
+                                    @management.Name
+                                </option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-check-label">
+                            <input class="form-check-input" asp-for="operational.IsActive" /> @Html.DisplayNameFor(model => model.operational.IsActive)
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+@* @section UpdateScripts
+{ *@
+    @* <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const base64Image = document.getElementById('base64Image').value;
+            const fileInput = document.querySelector('input[name="Logo"]');
+
+            if (base64Image) {
+                const byteString = atob(base64Image.split(',')[1]);
+                const mimeString = base64Image.split(',')[0].split(':')[1].split(';')[0];
+
+                const ab = new ArrayBuffer(byteString.length);
+                const ia = new Uint8Array(ab);
+                for (let i = 0; i < byteString.length; i++) {
+                    ia[i] = byteString.charCodeAt(i);
+                }
+
+                const blob = new Blob([ab], { type: mimeString });
+                const file = new File([blob], "image.png");
+
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                fileInput.files = dataTransfer.files;
+
+                previewImage({ target: fileInput });
+            }
+        });
+
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = function () {
+                const output = document.getElementById('logoPreview');
+                output.src = reader.result;
+                output.style.display = 'block';
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#departmentDropdown').change(function () {
+                var departmentId = $(this).val();
+                if (departmentId) {
+                    $.ajax({
+                        url: '@Url.Action("GetManagementsByDepartment", "Operationals")',
+                        type: "GET",
+                        data: { departmentId: departmentId },
+                        success: function (data) {
+                            $('#managementDropdown').empty();
+                            console.log("Fetched managements: ", data);
+                            $.each(data, function (index, management) {
+                                $('#managementDropdown').append('<option value="' + management["idManagement"] + '">' + management["name"] + '</option>');
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error fetching managements: ", error);
+                        }
+                    });
+                } else {
+                    $('#managementDropdown').empty();
+                }
+            });
+        });
+    </script> *@
+@* } *@
+
